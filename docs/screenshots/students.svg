@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#0b132b; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2541" />
+      <stop offset="100%" stop-color="#141c33" />
+    </linearGradient>
+  </defs>
+
+  <!-- Browser Header -->
+  <rect x="0" y="0" width="1200" height="42" fill="#141c33"/>
+  <circle cx="24" cy="21" r="6" fill="#ff5f56"/>
+  <circle cx="44" cy="21" r="6" fill="#ffbd2e"/>
+  <circle cx="64" cy="21" r="6" fill="#27c93f"/>
+  <rect x="200" y="8" width="800" height="26" rx="13" fill="#0b132b" stroke="#2a375a"/>
+  <text x="600" y="25" fill="#94a3b8" font-size="12" text-anchor="middle">http://127.0.0.1:5050/app#students (Student Directory &amp; Detail Dossier)</text>
+
+  <!-- Sidebar -->
+  <rect x="0" y="42" width="220" height="708" fill="#141c33" stroke-width="1" stroke="#1e293b"/>
+  <text x="24" y="80" fill="#00b4d8" font-size="16" font-weight="800">ScholarshipSync</text>
+  <text x="44" y="144" fill="#94a3b8" font-size="13">📊 Overview</text>
+  <rect x="12" y="160" width="196" height="38" rx="8" fill="#00b4d8" fill-opacity="0.15" stroke="#00b4d8" stroke-width="1"/>
+  <text x="44" y="184" fill="#00b4d8" font-size="13" font-weight="700">👥 Students</text>
+  <text x="44" y="224" fill="#94a3b8" font-size="13">🎓 Scholarships</text>
+  <text x="44" y="264" fill="#94a3b8" font-size="13">💳 Fees &amp; Dues</text>
+  <text x="44" y="304" fill="#94a3b8" font-size="13">💵 Payments</text>
+  <text x="44" y="344" fill="#94a3b8" font-size="13">🏦 Disbursements</text>
+  <text x="44" y="384" fill="#94a3b8" font-size="13">🕸️ Graph Explorer</text>
+  <text x="44" y="424" fill="#94a3b8" font-size="13">⚙️ Diagnostics</text>
+
+  <!-- Content Header -->
+  <text x="250" y="85" fill="#ffffff" font-size="22" font-weight="800">Student Directory &amp; Academic Profiles</text>
+  <text x="250" y="105" fill="#94a3b8" font-size="13">Normalized 1:1 and 1:N relational tables: STUDENT, STUDENT_PROFILE, GUARDIAN, PROGRAM</text>
+
+  <!-- Controls Bar: Search & Filter -->
+  <rect x="250" y="125" width="340" height="40" rx="8" fill="#1c2541" stroke="#334155"/>
+  <text x="270" y="150" fill="#94a3b8" font-size="13">🔍 Search by name or Roll No (e.g. S001)...</text>
+  
+  <rect x="600" y="125" width="160" height="40" rx="8" fill="#1c2541" stroke="#334155"/>
+  <text x="620" y="150" fill="#ffffff" font-size="13">All Programs ▾</text>
+
+  <rect x="1000" y="125" width="165" height="40" rx="8" fill="#0077b6"/>
+  <text x="1082" y="150" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">+ Register Student</text>
+
+  <!-- Table Container (Left 58%) -->
+  <rect x="250" y="180" width="540" height="540" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="270" y="212" fill="#ffffff" font-size="15" font-weight="700">Enrolled Students (15 Records)</text>
+
+  <!-- Headers -->
+  <text x="270" y="245" fill="#94a3b8" font-size="11" font-weight="600">ROLL NO</text>
+  <text x="350" y="245" fill="#94a3b8" font-size="11" font-weight="600">STUDENT NAME</text>
+  <text x="520" y="245" fill="#94a3b8" font-size="11" font-weight="600">PROGRAM</text>
+  <text x="710" y="245" fill="#94a3b8" font-size="11" font-weight="600">ACTION</text>
+
+  <!-- Row 1 (Selected) -->
+  <rect x="260" y="260" width="520" height="48" rx="8" fill="#00b4d8" fill-opacity="0.12" stroke="#00b4d8" stroke-width="1"/>
+  <text x="270" y="290" fill="#00b4d8" font-size="13" font-weight="700">S001</text>
+  <text x="350" y="290" fill="#ffffff" font-size="13" font-weight="600">Rahul Sharma</text>
+  <text x="520" y="290" fill="#94a3b8" font-size="12">B.Tech CSE (P001)</text>
+  <rect x="705" y="274" width="65" height="24" rx="4" fill="#0077b6"/>
+  <text x="737" y="290" fill="#ffffff" font-size="11" text-anchor="middle">View ➔</text>
+
+  <!-- Row 2 -->
+  <line x1="260" y1="318" x2="780" y2="318" stroke="#1e293b"/>
+  <text x="270" y="344" fill="#94a3b8" font-size="13">S002</text>
+  <text x="350" y="344" fill="#ffffff" font-size="13">Priya Patel</text>
+  <text x="520" y="344" fill="#94a3b8" font-size="12">B.Tech ECE (P002)</text>
+  <rect x="705" y="328" width="65" height="24" rx="4" fill="#1e293b"/>
+  <text x="737" y="344" fill="#94a3b8" font-size="11" text-anchor="middle">View</text>
+
+  <!-- Row 3 -->
+  <line x1="260" y1="368" x2="780" y2="368" stroke="#1e293b"/>
+  <text x="270" y="394" fill="#94a3b8" font-size="13">S003</text>
+  <text x="350" y="394" fill="#ffffff" font-size="13">Amit Kumar</text>
+  <text x="520" y="394" fill="#94a3b8" font-size="12">B.Tech Mech (P003)</text>
+  <rect x="705" y="378" width="65" height="24" rx="4" fill="#1e293b"/>
+  <text x="737" y="394" fill="#94a3b8" font-size="11" text-anchor="middle">View</text>
+
+  <!-- Detail Dossier Panel (Right 38%) -->
+  <rect x="810" y="180" width="355" height="540" rx="12" fill="url(#cardGrad)" stroke="#00b4d8" stroke-width="1.2"/>
+  <text x="830" y="214" fill="#ffffff" font-size="16" font-weight="700">Student Dossier: S001</text>
+  <text x="830" y="234" fill="#10b981" font-size="12">Active Enrollment · Good Standing</text>
+
+  <!-- Profile Card -->
+  <rect x="830" y="250" width="315" height="130" rx="8" fill="#0b132b" stroke="#1e293b"/>
+  <text x="845" y="274" fill="#00b4d8" font-size="12" font-weight="700">PERSONAL &amp; ACADEMIC</text>
+  <text x="845" y="298" fill="#cbd5e1" font-size="12">Full Name: <tspan fill="#ffffff" font-weight="600">Rahul Sharma</tspan></text>
+  <text x="845" y="318" fill="#cbd5e1" font-size="12">Phone: <tspan fill="#ffffff">9876543210</tspan></text>
+  <text x="845" y="338" fill="#cbd5e1" font-size="12">Blood Group: <tspan fill="#ffffff">O+</tspan> | DOB: <tspan fill="#ffffff">15-May-2003</tspan></text>
+  <text x="845" y="358" fill="#cbd5e1" font-size="12">Address: <tspan fill="#ffffff">12-A, MG Road, Bengaluru (560001)</tspan></text>
+
+  <!-- Guardian Card -->
+  <rect x="830" y="390" width="315" height="90" rx="8" fill="#0b132b" stroke="#1e293b"/>
+  <text x="845" y="414" fill="#00b4d8" font-size="12" font-weight="700">GUARDIAN RECORD (GUARDIAN TABLE)</text>
+  <text x="845" y="438" fill="#cbd5e1" font-size="12">Name: <tspan fill="#ffffff">Sunil Sharma (Father)</tspan></text>
+  <text x="845" y="458" fill="#cbd5e1" font-size="12">Phone: <tspan fill="#ffffff">9876500001</tspan> | ID: <tspan fill="#ffffff">G001</tspan></text>
+
+  <!-- Financial Standing Card -->
+  <rect x="830" y="490" width="315" height="150" rx="8" fill="#0b132b" stroke="#1e293b"/>
+  <text x="845" y="514" fill="#00b4d8" font-size="12" font-weight="700">FINANCIAL SUMMARY</text>
+  <text x="845" y="538" fill="#cbd5e1" font-size="12">Scholarship: <tspan fill="#38bdf8" font-weight="600">SCH001 (Merit, ₹50,000)</tspan></text>
+  <text x="845" y="558" fill="#cbd5e1" font-size="12">Tuition Fee: <tspan fill="#ffffff">₹75,000 (F001)</tspan></text>
+  <text x="845" y="578" fill="#cbd5e1" font-size="12">Payments Settled: <tspan fill="#10b981" font-weight="600">₹75,000 (Paid in Full)</tspan></text>
+  <text x="845" y="598" fill="#cbd5e1" font-size="12">Net Outstanding: <tspan fill="#10b981" font-weight="700">₹0.00</tspan></text>
+
+  <!-- Action: Inspect in Graph -->
+  <rect x="830" y="655" width="315" height="42" rx="8" fill="#0077b6"/>
+  <text x="987" y="681" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">🕸️ Explore S001 in Neo4j Graph</text>
+</svg>

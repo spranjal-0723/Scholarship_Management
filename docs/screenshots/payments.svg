@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#0b132b; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2541" />
+      <stop offset="100%" stop-color="#141c33" />
+    </linearGradient>
+  </defs>
+
+  <!-- Browser Header -->
+  <rect x="0" y="0" width="1200" height="42" fill="#141c33"/>
+  <circle cx="24" cy="21" r="6" fill="#ff5f56"/>
+  <circle cx="44" cy="21" r="6" fill="#ffbd2e"/>
+  <circle cx="64" cy="21" r="6" fill="#27c93f"/>
+  <rect x="200" y="8" width="800" height="26" rx="13" fill="#0b132b" stroke="#2a375a"/>
+  <text x="600" y="25" fill="#94a3b8" font-size="12" text-anchor="middle">http://127.0.0.1:5050/app#payments (Fee Payment Settlement &amp; Trigger Validation)</text>
+
+  <!-- Sidebar -->
+  <rect x="0" y="42" width="220" height="708" fill="#141c33" stroke-width="1" stroke="#1e293b"/>
+  <text x="24" y="80" fill="#00b4d8" font-size="16" font-weight="800">ScholarshipSync</text>
+  <text x="44" y="144" fill="#94a3b8" font-size="13">📊 Overview</text>
+  <text x="44" y="184" fill="#94a3b8" font-size="13">👥 Students</text>
+  <text x="44" y="224" fill="#94a3b8" font-size="13">🎓 Scholarships</text>
+  <text x="44" y="264" fill="#94a3b8" font-size="13">💳 Fees &amp; Dues</text>
+  <rect x="12" y="280" width="196" height="38" rx="8" fill="#00b4d8" fill-opacity="0.15" stroke="#00b4d8" stroke-width="1"/>
+  <text x="44" y="304" fill="#00b4d8" font-size="13" font-weight="700">💵 Payments</text>
+  <text x="44" y="344" fill="#94a3b8" font-size="13">🏦 Disbursements</text>
+  <text x="44" y="384" fill="#94a3b8" font-size="13">🕸️ Graph Explorer</text>
+  <text x="44" y="424" fill="#94a3b8" font-size="13">⚙️ Diagnostics</text>
+
+  <!-- Content Header -->
+  <text x="250" y="85" fill="#ffffff" font-size="22" font-weight="800">Payment Collection &amp; Validation Engine</text>
+  <text x="250" y="105" fill="#94a3b8" font-size="13">Protected by Oracle Trigger TRG_CHECK_FEE_PAYMENT (Prevents cumulative overpayment)</text>
+
+  <!-- Record Payment Modal / Panel (Left 42%) -->
+  <rect x="250" y="130" width="410" height="590" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="274" y="165" fill="#ffffff" font-size="16" font-weight="700">Record Fee Collection</text>
+  <text x="274" y="185" fill="#94a3b8" font-size="12">Direct gateway settlement or scholarship offset</text>
+
+  <!-- Form -->
+  <text x="274" y="220" fill="#cbd5e1" font-size="12" font-weight="600">Select Fee Invoice</text>
+  <rect x="274" y="230" width="360" height="38" rx="6" fill="#0b132b" stroke="#334155"/>
+  <text x="288" y="254" fill="#ffffff" font-size="13">F002 — Priya Patel (Bal: ₹30,000)</text>
+
+  <text x="274" y="295" fill="#cbd5e1" font-size="12" font-weight="600">Payment Channel</text>
+  <rect x="274" y="305" width="360" height="38" rx="6" fill="#0b132b" stroke="#334155"/>
+  <text x="288" y="329" fill="#ffffff" font-size="13">M001 — Net Banking</text>
+
+  <text x="274" y="370" fill="#cbd5e1" font-size="12" font-weight="600">Amount to Settle (₹)</text>
+  <rect x="274" y="380" width="360" height="38" rx="6" fill="#0b132b" stroke="#334155"/>
+  <text x="288" y="404" fill="#ffffff" font-size="13">30000.00</text>
+
+  <text x="274" y="445" fill="#cbd5e1" font-size="12" font-weight="600">Transaction Reference ID</text>
+  <rect x="274" y="455" width="360" height="38" rx="6" fill="#0b132b" stroke="#334155"/>
+  <text x="288" y="479" fill="#ffffff" font-size="13">TXN99182310</text>
+
+  <!-- Realtime Trigger Guard Preview -->
+  <rect x="274" y="510" width="360" height="70" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+  <text x="288" y="532" fill="#10b981" font-size="12" font-weight="700">✓ PL/SQL TRIGGER VALIDATION PREVIEW</text>
+  <text x="288" y="550" fill="#cbd5e1" font-size="11">Current Paid: ₹50,000 + New: ₹30,000 = ₹80,000</text>
+  <text x="288" y="566" fill="#cbd5e1" font-size="11">Total Invoice: ₹80,000 (Within limit — Valid settlement)</text>
+
+  <!-- Submit -->
+  <rect x="274" y="600" width="360" height="42" rx="8" fill="#0077b6"/>
+  <text x="454" y="626" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">Confirm &amp; Record Payment</text>
+
+  <!-- Payment History Table (Right 54%) -->
+  <rect x="680" y="130" width="480" height="590" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="704" y="165" fill="#ffffff" font-size="16" font-weight="700">Settled Receipts (FEE_PAYMENT)</text>
+
+  <text x="704" y="205" fill="#94a3b8" font-size="11" font-weight="600">RECEIPT</text>
+  <text x="780" y="205" fill="#94a3b8" font-size="11" font-weight="600">FEE ID</text>
+  <text x="850" y="205" fill="#94a3b8" font-size="11" font-weight="600">AMOUNT</text>
+  <text x="940" y="205" fill="#94a3b8" font-size="11" font-weight="600">METHOD</text>
+  <text x="1040" y="205" fill="#94a3b8" font-size="11" font-weight="600">DATE</text>
+
+  <!-- Row 1 -->
+  <line x1="695" y1="220" x2="1145" y2="220" stroke="#1e293b"/>
+  <text x="704" y="250" fill="#00b4d8" font-size="12" font-weight="700">PAY001</text>
+  <text x="780" y="250" fill="#94a3b8" font-size="12">F001</text>
+  <text x="850" y="250" fill="#10b981" font-size="12" font-weight="700">₹75,000</text>
+  <text x="940" y="250" fill="#ffffff" font-size="12">Net Banking</text>
+  <text x="1040" y="250" fill="#94a3b8" font-size="11">15-Feb-2026</text>
+
+  <!-- Row 2 -->
+  <line x1="695" y1="272" x2="1145" y2="272" stroke="#1e293b"/>
+  <text x="704" y="302" fill="#00b4d8" font-size="12" font-weight="700">PAY002</text>
+  <text x="780" y="302" fill="#94a3b8" font-size="12">F002</text>
+  <text x="850" y="302" fill="#10b981" font-size="12" font-weight="700">₹50,000</text>
+  <text x="940" y="302" fill="#ffffff" font-size="12">UPI Gateway</text>
+  <text x="1040" y="302" fill="#94a3b8" font-size="11">20-Feb-2026</text>
+</svg>

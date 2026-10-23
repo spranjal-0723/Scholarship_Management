@@ -1,12 +1,55 @@
-from flask import Flask, jsonify, request
+import os
+from datetime import timedelta
+from flask import Flask, jsonify, request, send_from_directory, session
 from flask_cors import CORS
-from db import get_connection
+
+try:
+    from backend.auth import auth_bp, login_required, validate_csrf
+except ModuleNotFoundError:
+    from auth import auth_bp, login_required, validate_csrf
+
+
+try:
+    from db import get_connection
+except ModuleNotFoundError:
+    from backend.db import get_connection
+
+try:
+    from backend.neo4j_routes import neo4j_bp
+except ModuleNotFoundError:
+    from neo4j_routes import neo4j_bp
+
 app = Flask(__name__)
-CORS(app)
+
+# Session security attributes
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "scholarship-fee-mgmt-secret-key-2026-da3")
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "false").lower() in ("true", "1")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
+
+cors_origins = os.getenv("CORS_ALLOWED_ORIGINS")
+if cors_origins:
+    origins_list = [o.strip() for o in cors_origins.split(",") if o.strip()]
+    CORS(app, resources={r"/*": {"origins": origins_list}}, supports_credentials=True)
+else:
+    CORS(app, supports_credentials=True)
+
+app.register_blueprint(neo4j_bp)
+app.register_blueprint(auth_bp)
+
+
+@app.before_request
+def enforce_csrf():
+    if request.method in ("POST", "PUT", "DELETE", "PATCH"):
+        if request.path.startswith("/api/auth/login") or request.path.startswith("/api/auth/logout"):
+            return
+        if not validate_csrf():
+            return jsonify({"error": "CSRF verification failed. Missing or invalid token."}), 403
 
 
 # ============================================================
-# HOME / API STATUS
+# HOME / API STATUS & UI ROUTE
 # ============================================================
 
 @app.route("/")
@@ -14,6 +57,13 @@ def home():
     return jsonify({
         "message": "Scholarship and Fee Management System API is running"
     })
+
+
+@app.route("/app")
+@app.route("/ui")
+def serve_ui():
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    return send_from_directory(repo_root, "index.html")
 
 
 # ============================================================
@@ -69,6 +119,7 @@ def get_students():
 # ============================================================
 
 @app.route("/api/students", methods=["POST"])
+@login_required
 def add_student():
     data = request.get_json()
 
@@ -309,6 +360,7 @@ def get_applications():
 # ============================================================
 
 @app.route("/api/applications", methods=["POST"])
+@login_required
 def add_application():
     data = request.get_json()
 
@@ -380,6 +432,7 @@ def add_application():
 # ============================================================
 
 @app.route("/api/scholarships", methods=["POST"])
+@login_required
 def add_scholarship():
     data = request.get_json()
 
@@ -529,6 +582,7 @@ def get_student_scholarships(student_id):
 # ============================================================
 
 @app.route("/api/applications/<application_id>/status", methods=["PUT"])
+@login_required
 def update_application_status(application_id):
     data = request.get_json()
 
@@ -655,6 +709,7 @@ def get_disbursements():
 # ============================================================
 
 @app.route("/api/disbursements", methods=["POST"])
+@login_required
 def add_disbursement():
     data = request.get_json()
 
@@ -783,6 +838,7 @@ def add_disbursement():
 # ============================================================
 
 @app.route("/api/fees", methods=["POST"])
+@login_required
 def add_fee():
     data = request.get_json()
 
@@ -1059,6 +1115,7 @@ def get_payments():
 # ============================================================
 
 @app.route("/api/payments", methods=["POST"])
+@login_required
 def add_payment():
     data = request.get_json()
 
@@ -1272,8 +1329,93 @@ def get_dashboard():
 
 
 # ============================================================
+# SYSTEM HEALTH & TELEMETRY
+# ============================================================
+
+@app.route("/api/health", methods=["GET"])
+def system_health():
+    """Consolidated system health check and component telemetry."""
+    status = {
+        "status": "healthy",
+        "flask": {
+            "status": "healthy",
+            "uptime": "active",
+            "message": "Scholarship and Fee Management System API is running"
+        },
+        "oracle": {
+            "status": "unavailable",
+            "tables": 12,
+            "total_records": 0
+        },
+        "neo4j": {
+            "status": "unavailable",
+            "total_nodes": 0,
+            "total_edges": 0
+        }
+    }
+
+    # Check Oracle
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        tables = [
+            "DEPARTMENT", "PROGRAM", "STUDENT", "STUDENT_PROFILE",
+            "GUARDIAN", "SCHOLARSHIP", "SCHOLARSHIP_APPLICATION",
+            "STUDENT_FEE", "PAYMENT_METHOD", "FEE_PAYMENT",
+            "BANK_ACCOUNT", "DISBURSEMENT"
+        ]
+        total = 0
+        for t in tables:
+            try:
+                cursor.execute(f"SELECT COUNT(*) FROM {t}")
+                row = cursor.fetchone()
+                if row:
+                    total += row[0]
+            except Exception:
+                pass
+        status["oracle"] = {
+            "status": "connected",
+            "tables": len(tables),
+            "total_records": total
+        }
+    except Exception as e:
+        status["oracle"]["error"] = str(e)
+        status["status"] = "degraded"
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    # Check Neo4j
+    try:
+        from backend.neo4j_db import get_driver
+        driver = get_driver()
+        with driver.session() as session:
+            r_nodes = session.run("MATCH (n) RETURN count(n) AS cnt")
+            node_cnt = r_nodes.single()["cnt"]
+            r_edges = session.run("MATCH ()-[r]->() RETURN count(r) AS cnt")
+            edge_cnt = r_edges.single()["cnt"]
+            status["neo4j"] = {
+                "status": "connected",
+                "total_nodes": node_cnt,
+                "total_edges": edge_cnt
+            }
+    except Exception as e:
+        status["neo4j"]["error"] = str(e)
+        status["status"] = "degraded"
+
+    return jsonify(status), 200
+
+
+# ============================================================
 # START FLASK SERVER
 # ============================================================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug_mode = os.getenv("FLASK_DEBUG", "false").lower() in ("true", "1", "t")
+    port = int(os.getenv("PORT", "5050"))
+    host = os.getenv("HOST", "0.0.0.0")
+    app.run(host=host, port=port, debug=debug_mode)

@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#0b132b; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2541" />
+      <stop offset="100%" stop-color="#141c33" />
+    </linearGradient>
+    <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00b4d8" stop-opacity="0.0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Top Browser Bar -->
+  <rect x="0" y="0" width="1200" height="42" fill="#141c33"/>
+  <circle cx="24" cy="21" r="6" fill="#ff5f56"/>
+  <circle cx="44" cy="21" r="6" fill="#ffbd2e"/>
+  <circle cx="64" cy="21" r="6" fill="#27c93f"/>
+  <rect x="200" y="8" width="800" height="26" rx="13" fill="#0b132b" stroke="#2a375a"/>
+  <text x="600" y="25" fill="#94a3b8" font-size="12" text-anchor="middle">http://127.0.0.1:5050/app (Dashboard — Oracle OLTP Mode)</text>
+
+  <!-- Left Sidebar Navigation -->
+  <rect x="0" y="42" width="220" height="708" fill="#141c33" stroke-width="1" stroke="#1e293b"/>
+  <!-- Logo / Title -->
+  <text x="24" y="80" fill="#00b4d8" font-size="16" font-weight="800">ScholarshipSync</text>
+  <text x="24" y="96" fill="#64748b" font-size="11">DBMS Academic Suite</text>
+
+  <!-- Nav Items -->
+  <rect x="12" y="120" width="196" height="38" rx="8" fill="#00b4d8" fill-opacity="0.15" stroke="#00b4d8" stroke-width="1"/>
+  <text x="44" y="144" fill="#00b4d8" font-size="13" font-weight="700">📊 Overview</text>
+
+  <text x="44" y="184" fill="#94a3b8" font-size="13">👥 Students</text>
+  <text x="44" y="224" fill="#94a3b8" font-size="13">🎓 Scholarships</text>
+  <text x="44" y="264" fill="#94a3b8" font-size="13">💳 Fees &amp; Dues</text>
+  <text x="44" y="304" fill="#94a3b8" font-size="13">💵 Payments</text>
+  <text x="44" y="344" fill="#94a3b8" font-size="13">🏦 Disbursements</text>
+  <text x="44" y="384" fill="#94a3b8" font-size="13">🕸️ Graph Explorer</text>
+  <text x="44" y="424" fill="#94a3b8" font-size="13">⚙️ Diagnostics</text>
+
+  <!-- Engine Switcher Badge in Sidebar -->
+  <rect x="16" y="590" width="188" height="60" rx="8" fill="#0b132b" stroke="#334155"/>
+  <text x="26" y="612" fill="#94a3b8" font-size="11">ACTIVE DATABASE ENGINE</text>
+  <rect x="26" y="622" width="76" height="20" rx="4" fill="#3b82f6"/>
+  <text x="64" y="636" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">Oracle 23c</text>
+  <text x="115" y="636" fill="#64748b" font-size="11">Neo4j</text>
+
+  <!-- User Info Footer -->
+  <rect x="16" y="665" width="188" height="50" rx="8" fill="#1e293b"/>
+  <circle cx="36" cy="690" r="14" fill="#0077b6"/>
+  <text x="36" y="694" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">AD</text>
+  <text x="58" y="686" fill="#ffffff" font-size="12" font-weight="600">Demo Admin</text>
+  <text x="58" y="702" fill="#10b981" font-size="10">● Authenticated</text>
+
+  <!-- Main Content Header -->
+  <text x="250" y="85" fill="#ffffff" font-size="22" font-weight="800">Executive Financial &amp; Academic Overview</text>
+  <text x="250" y="105" fill="#94a3b8" font-size="13">Unified Oracle SQL/PLSQL relational engine active · 15 enrolled students · Real-time ACID aggregation</text>
+
+  <!-- Metric KPI Cards -->
+  <!-- Card 1 -->
+  <rect x="250" y="125" width="215" height="105" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="270" y="152" fill="#94a3b8" font-size="12">TOTAL STUDENTS</text>
+  <text x="270" y="186" fill="#ffffff" font-size="28" font-weight="800">15</text>
+  <text x="270" y="210" fill="#10b981" font-size="11">✓ 100% Verified in 3NF</text>
+
+  <!-- Card 2 -->
+  <rect x="480" y="125" width="215" height="105" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="500" y="152" fill="#94a3b8" font-size="12">SCHOLARSHIPS AWARDED</text>
+  <text x="500" y="186" fill="#38bdf8" font-size="28" font-weight="800">₹4,20,000</text>
+  <text x="500" y="210" fill="#94a3b8" font-size="11">8 Granted Schemes</text>
+
+  <!-- Card 3 -->
+  <rect x="710" y="125" width="215" height="105" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="730" y="152" fill="#94a3b8" font-size="12">FEE INVOICED</text>
+  <text x="730" y="186" fill="#ffffff" font-size="28" font-weight="800">₹12,50,000</text>
+  <text x="730" y="210" fill="#94a3b8" font-size="11">15 Invoices Issued</text>
+
+  <!-- Card 4 -->
+  <rect x="940" y="125" width="225" height="105" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="960" y="152" fill="#94a3b8" font-size="12">COLLECTIONS / DUE</text>
+  <text x="960" y="186" fill="#10b981" font-size="24" font-weight="800">₹9,80,000</text>
+  <text x="960" y="210" fill="#f43f5e" font-size="11">Outstanding: ₹2,70,000</text>
+
+  <!-- Chart Panel -->
+  <rect x="250" y="250" width="570" height="260" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="274" y="282" fill="#ffffff" font-size="15" font-weight="700">Fee Collection vs Scholarship Offsets (Monthly)</text>
+  
+  <!-- Line Chart Path Mockup -->
+  <path d="M 280 460 L 360 430 L 440 380 L 520 400 L 600 340 L 680 320 L 780 300 L 780 470 L 280 470 Z" fill="url(#chartGrad)"/>
+  <polyline points="280,460 360,430 440,380 520,400 600,340 680,320 780,300" fill="none" stroke="#00b4d8" stroke-width="3"/>
+  <circle cx="780" cy="300" r="5" fill="#ffffff" stroke="#00b4d8" stroke-width="2"/>
+  <text x="780" y="290" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">₹9.8L</text>
+  
+  <!-- Bottom labels -->
+  <text x="280" y="490" fill="#64748b" font-size="11">Jan</text>
+  <text x="360" y="490" fill="#64748b" font-size="11">Feb</text>
+  <text x="440" y="490" fill="#64748b" font-size="11">Mar</text>
+  <text x="520" y="490" fill="#64748b" font-size="11">Apr</text>
+  <text x="600" y="490" fill="#64748b" font-size="11">May</text>
+  <text x="680" y="490" fill="#64748b" font-size="11">Jun</text>
+  <text x="780" y="490" fill="#64748b" font-size="11">Jul</text>
+
+  <!-- Distribution Donut / Category Card -->
+  <rect x="840" y="250" width="325" height="260" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="864" y="282" fill="#ffffff" font-size="15" font-weight="700">Scholarship Distribution</text>
+  <!-- Mockup Donut -->
+  <circle cx="1000" cy="370" r="60" fill="none" stroke="#0077b6" stroke-width="24"/>
+  <circle cx="1000" cy="370" r="60" fill="none" stroke="#00b4d8" stroke-width="24" stroke-dasharray="210 380"/>
+  <circle cx="1000" cy="370" r="60" fill="none" stroke="#22c55e" stroke-width="24" stroke-dasharray="80 380" stroke-dashoffset="-210"/>
+  <text x="1000" y="375" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">8 Grants</text>
+  <text x="870" y="475" fill="#00b4d8" font-size="11">■ Merit (55%)</text>
+  <text x="965" y="475" fill="#22c55e" font-size="11">■ Means (25%)</text>
+  <text x="1060" y="475" fill="#0077b6" font-size="11">■ Sports (20%)</text>
+
+  <!-- Recent Transactions Table Panel -->
+  <rect x="250" y="530" width="915" height="195" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="274" y="562" fill="#ffffff" font-size="15" font-weight="700">Recent Financial Ledger Entries (Oracle View: VW_STUDENT_FEE_SUMMARY)</text>
+  
+  <!-- Table Header -->
+  <text x="274" y="595" fill="#94a3b8" font-size="12" font-weight="600">STUDENT</text>
+  <text x="440" y="595" fill="#94a3b8" font-size="12" font-weight="600">FEE ID</text>
+  <text x="560" y="595" fill="#94a3b8" font-size="12" font-weight="600">INVOICE</text>
+  <text x="690" y="595" fill="#94a3b8" font-size="12" font-weight="600">TOTAL PAID</text>
+  <text x="830" y="595" fill="#94a3b8" font-size="12" font-weight="600">OUTSTANDING</text>
+  <text x="1020" y="595" fill="#94a3b8" font-size="12" font-weight="600">STATUS</text>
+
+  <!-- Row 1 -->
+  <line x1="270" y1="608" x2="1140" y2="608" stroke="#1e293b"/>
+  <text x="274" y="632" fill="#ffffff" font-size="13">Rahul Sharma (S001)</text>
+  <text x="440" y="632" fill="#94a3b8" font-size="13">F001</text>
+  <text x="560" y="632" fill="#ffffff" font-size="13">₹75,000</text>
+  <text x="690" y="632" fill="#10b981" font-size="13">₹75,000</text>
+  <text x="830" y="632" fill="#94a3b8" font-size="13">₹0.00</text>
+  <rect x="1020" y="618" width="60" height="20" rx="4" fill="#10b981" fill-opacity="0.2"/>
+  <text x="1050" y="632" fill="#10b981" font-size="11" font-weight="700" text-anchor="middle">Settled</text>
+
+  <!-- Row 2 -->
+  <line x1="270" y1="648" x2="1140" y2="648" stroke="#1e293b"/>
+  <text x="274" y="672" fill="#ffffff" font-size="13">Priya Patel (S002)</text>
+  <text x="440" y="672" fill="#94a3b8" font-size="13">F002</text>
+  <text x="560" y="672" fill="#ffffff" font-size="13">₹80,000</text>
+  <text x="690" y="672" fill="#10b981" font-size="13">₹50,000</text>
+  <text x="830" y="672" fill="#f43f5e" font-size="13">₹30,000</text>
+  <rect x="1020" y="658" width="60" height="20" rx="4" fill="#f59e0b" fill-opacity="0.2"/>
+  <text x="1050" y="672" fill="#f59e0b" font-size="11" font-weight="700" text-anchor="middle">Partial</text>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#0b132b; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2541" />
+      <stop offset="100%" stop-color="#141c33" />
+    </linearGradient>
+    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00b4d8" />
+      <stop offset="100%" stop-color="#0077b6" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Browser Window Frame -->
+  <rect x="0" y="0" width="1200" height="750" fill="#0b132b"/>
+  <rect x="0" y="0" width="1200" height="42" fill="#141c33"/>
+  
+  <!-- Window Controls -->
+  <circle cx="24" cy="21" r="6" fill="#ff5f56"/>
+  <circle cx="44" cy="21" r="6" fill="#ffbd2e"/>
+  <circle cx="64" cy="21" r="6" fill="#27c93f"/>
+
+  <!-- URL Bar -->
+  <rect x="200" y="8" width="800" height="26" rx="13" fill="#0b132b" stroke="#2a375a"/>
+  <text x="600" y="25" fill="#94a3b8" font-size="12" text-anchor="middle">http://127.0.0.1:5050/ (Scholarship &amp; Fee Management System)</text>
+
+  <!-- Background Ambient Glow -->
+  <circle cx="600" cy="380" r="320" fill="#0077b6" opacity="0.08" />
+
+  <!-- Login Card -->
+  <rect x="390" y="100" width="420" height="580" rx="16" fill="url(#cardGrad)" stroke="#2a375a" stroke-width="1.5" filter="url(#shadow)"/>
+
+  <!-- Brand Badge / Logo Icon -->
+  <rect x="560" y="130" width="80" height="80" rx="20" fill="#00b4d8" fill-opacity="0.15" stroke="#00b4d8" stroke-width="2"/>
+  <path d="M600 150 L625 165 L600 180 L575 165 Z" fill="#00b4d8"/>
+  <path d="M583 172 L583 192 Q600 202 617 192 L617 172" fill="none" stroke="#00b4d8" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Title & Subtitle -->
+  <text x="600" y="240" fill="#ffffff" font-size="20" font-weight="700" text-anchor="middle">Academic Portal Login</text>
+  <text x="600" y="262" fill="#94a3b8" font-size="13" text-anchor="middle">Unified Oracle &amp; Neo4j Management Platform</text>
+
+  <!-- Demo Account Banner -->
+  <rect x="420" y="285" width="360" height="64" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4"/>
+  <text x="435" y="306" fill="#60a5fa" font-size="11" font-weight="700">DEMO ADMINISTRATOR ACCESS</text>
+  <text x="435" y="324" fill="#cbd5e1" font-size="12">Email: <tspan font-weight="600">admin@scholarship.demo</tspan></text>
+  <text x="435" y="340" fill="#cbd5e1" font-size="12">Password: <tspan font-weight="600">Demo@12345</tspan> (Role: Administrator)</text>
+
+  <!-- Form Fields -->
+  <text x="420" y="375" fill="#cbd5e1" font-size="13" font-weight="600">Email Address</text>
+  <rect x="420" y="385" width="360" height="42" rx="8" fill="#0b132b" stroke="#334155"/>
+  <text x="435" y="411" fill="#ffffff" font-size="13">admin@scholarship.demo</text>
+
+  <text x="420" y="450" fill="#cbd5e1" font-size="13" font-weight="600">Password</text>
+  <rect x="420" y="460" width="360" height="42" rx="8" fill="#0b132b" stroke="#334155"/>
+  <text x="435" y="486" fill="#ffffff" font-size="14">•••••••••••••</text>
+  <text x="750" y="486" fill="#94a3b8" font-size="12" text-anchor="middle">SHOW</text>
+
+  <!-- Remember Me & Reset -->
+  <rect x="422" y="518" width="14" height="14" rx="3" fill="#00b4d8"/>
+  <polyline points="425,525 428,529 433,522" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <text x="444" y="530" fill="#94a3b8" font-size="12">Remember session</text>
+  <text x="780" y="530" fill="#00b4d8" font-size="12" text-anchor="end">Faculty Viva Mode</text>
+
+  <!-- Submit Button -->
+  <rect x="420" y="555" width="360" height="46" rx="8" fill="url(#btnGrad)"/>
+  <text x="600" y="583" fill="#ffffff" font-size="15" font-weight="700" text-anchor="middle">Sign In to Dashboard &amp; Graph Explorer</text>
+
+  <!-- Quick Autofill Button -->
+  <rect x="420" y="612" width="360" height="34" rx="6" fill="#1e293b" stroke="#475569"/>
+  <text x="600" y="634" fill="#94a3b8" font-size="12" text-anchor="middle">⚡ Autofill Demo Credentials &amp; Connect</text>
+
+  <!-- Security Footer -->
+  <text x="600" y="715" fill="#64748b" font-size="11" text-anchor="middle">🔒 CSRF Protected · HttpOnly Session Cookie · PBKDF2 Password Hashing</text>
+</svg>

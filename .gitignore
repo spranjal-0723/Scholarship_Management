@@ -1,17 +1,43 @@
-# Python virtual environment
+# Python virtual environments
 backend/venv/
+venv/
+ENV/
+env/
+.venv/
 
-# Python cache
+# Python byte-compiled / cache files
 __pycache__/
 *.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Environment files
+# Environment and secrets (NEVER COMMIT REAL SECRETS)
 .env
 .env.*
+*.env
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
 
-# macOS
+# macOS system files
 .DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
 
-# IDE
+# IDE, editor and workspace configurations
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Temporary build, scratch and backup files
+*.backup
+*.backup.*
+*.bak
+scratch/

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#0b132b; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2541" />
+      <stop offset="100%" stop-color="#141c33" />
+    </linearGradient>
+  </defs>
+
+  <!-- Browser Header -->
+  <rect x="0" y="0" width="1200" height="42" fill="#141c33"/>
+  <circle cx="24" cy="21" r="6" fill="#ff5f56"/>
+  <circle cx="44" cy="21" r="6" fill="#ffbd2e"/>
+  <circle cx="64" cy="21" r="6" fill="#27c93f"/>
+  <rect x="200" y="8" width="800" height="26" rx="13" fill="#0b132b" stroke="#2a375a"/>
+  <text x="600" y="25" fill="#94a3b8" font-size="12" text-anchor="middle">http://127.0.0.1:5050/app#scholarships (Scholarship Lifecycle &amp; Grant Sanctions)</text>
+
+  <!-- Sidebar -->
+  <rect x="0" y="42" width="220" height="708" fill="#141c33" stroke-width="1" stroke="#1e293b"/>
+  <text x="24" y="80" fill="#00b4d8" font-size="16" font-weight="800">ScholarshipSync</text>
+  <text x="44" y="144" fill="#94a3b8" font-size="13">📊 Overview</text>
+  <text x="44" y="184" fill="#94a3b8" font-size="13">👥 Students</text>
+  <rect x="12" y="200" width="196" height="38" rx="8" fill="#00b4d8" fill-opacity="0.15" stroke="#00b4d8" stroke-width="1"/>
+  <text x="44" y="224" fill="#00b4d8" font-size="13" font-weight="700">🎓 Scholarships</text>
+  <text x="44" y="264" fill="#94a3b8" font-size="13">💳 Fees &amp; Dues</text>
+  <text x="44" y="304" fill="#94a3b8" font-size="13">💵 Payments</text>
+  <text x="44" y="344" fill="#94a3b8" font-size="13">🏦 Disbursements</text>
+  <text x="44" y="384" fill="#94a3b8" font-size="13">🕸️ Graph Explorer</text>
+  <text x="44" y="424" fill="#94a3b8" font-size="13">⚙️ Diagnostics</text>
+
+  <!-- Page Header -->
+  <text x="250" y="85" fill="#ffffff" font-size="22" font-weight="800">Scholarship Application &amp; Award Pipeline</text>
+  <text x="250" y="105" fill="#94a3b8" font-size="13">Tracks student submissions, evaluation workflow, and sanctioned grant capital</text>
+
+  <!-- KPI Badges -->
+  <rect x="250" y="125" width="210" height="70" rx="10" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="270" y="150" fill="#94a3b8" font-size="11">TOTAL APPLICATIONS</text>
+  <text x="270" y="180" fill="#ffffff" font-size="22" font-weight="700">15</text>
+
+  <rect x="480" y="125" width="210" height="70" rx="10" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="500" y="150" fill="#10b981" font-size="11">APPROVED SCHOLARSHIPS</text>
+  <text x="500" y="180" fill="#10b981" font-size="22" font-weight="700">8 (₹4,20,000)</text>
+
+  <rect x="710" y="125" width="210" height="70" rx="10" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="730" y="150" fill="#f59e0b" font-size="11">PENDING REVIEW</text>
+  <text x="730" y="180" fill="#f59e0b" font-size="22" font-weight="700">4 Applications</text>
+
+  <rect x="940" y="125" width="220" height="70" rx="10" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="960" y="150" fill="#f43f5e" font-size="11">REJECTED / INELIGIBLE</text>
+  <text x="960" y="180" fill="#f43f5e" font-size="22" font-weight="700">3 Applications</text>
+
+  <!-- Table Container -->
+  <rect x="250" y="215" width="910" height="505" rx="12" fill="url(#cardGrad)" stroke="#1e293b"/>
+  <text x="274" y="248" fill="#ffffff" font-size="15" font-weight="700">Scholarship Applications &amp; Awards (Oracle View: VW_SCHOLARSHIP_APPLICATION)</text>
+
+  <!-- Table Header -->
+  <text x="274" y="280" fill="#94a3b8" font-size="11" font-weight="600">APP ID</text>
+  <text x="350" y="280" fill="#94a3b8" font-size="11" font-weight="600">STUDENT</text>
+  <text x="480" y="280" fill="#94a3b8" font-size="11" font-weight="600">DATE</text>
+  <text x="580" y="280" fill="#94a3b8" font-size="11" font-weight="600">SCHEME</text>
+  <text x="740" y="280" fill="#94a3b8" font-size="11" font-weight="600">AMOUNT</text>
+  <text x="860" y="280" fill="#94a3b8" font-size="11" font-weight="600">STATUS</text>
+  <text x="990" y="280" fill="#94a3b8" font-size="11" font-weight="600">ACTION</text>
+
+  <!-- Row 1 (Approved) -->
+  <line x1="260" y1="295" x2="1140" y2="295" stroke="#1e293b"/>
+  <text x="274" y="324" fill="#00b4d8" font-size="13" font-weight="700">A001</text>
+  <text x="350" y="324" fill="#ffffff" font-size="13">Rahul Sharma (S001)</text>
+  <text x="480" y="324" fill="#94a3b8" font-size="12">10-Jan-2026</text>
+  <text x="580" y="324" fill="#ffffff" font-size="13">Merit Scholarship</text>
+  <text x="740" y="324" fill="#10b981" font-size="13" font-weight="700">₹50,000</text>
+  <rect x="860" y="310" width="70" height="20" rx="4" fill="#10b981" fill-opacity="0.2"/>
+  <text x="895" y="324" fill="#10b981" font-size="11" font-weight="700" text-anchor="middle">Approved</text>
+  <rect x="990" y="308" width="90" height="24" rx="4" fill="#1e293b"/>
+  <text x="1035" y="324" fill="#94a3b8" font-size="11" text-anchor="middle">View Award</text>
+
+  <!-- Row 2 (Pending Review) -->
+  <line x1="260" y1="345" x2="1140" y2="345" stroke="#1e293b"/>
+  <text x="274" y="374" fill="#00b4d8" font-size="13" font-weight="700">A004</text>
+  <text x="350" y="374" fill="#ffffff" font-size="13">Sneha Gupta (S004)</text>
+  <text x="480" y="374" fill="#94a3b8" font-size="12">15-Feb-2026</text>
+  <text x="580" y="374" fill="#94a3b8" font-size="13">Means-cum-Merit</text>
+  <text x="740" y="374" fill="#94a3b8" font-size="13">--</text>
+  <rect x="860" y="360" width="70" height="20" rx="4" fill="#f59e0b" fill-opacity="0.2"/>
+  <text x="895" y="374" fill="#f59e0b" font-size="11" font-weight="700" text-anchor="middle">Pending</text>
+  <rect x="990" y="358" width="55" height="24" rx="4" fill="#10b981"/>
+  <text x="1017" y="374" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">Approve</text>
+  <rect x="1055" y="358" width="50" height="24" rx="4" fill="#f43f5e"/>
+  <text x="1080" y="374" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">Reject</text>
+
+  <!-- Row 3 (Approved) -->
+  <line x1="260" y1="395" x2="1140" y2="395" stroke="#1e293b"/>
+  <text x="274" y="424" fill="#00b4d8" font-size="13" font-weight="700">A005</text>
+  <text x="350" y="424" fill="#ffffff" font-size="13">Vikram Singh (S005)</text>
+  <text x="480" y="424" fill="#94a3b8" font-size="12">20-Feb-2026</text>
+  <text x="580" y="424" fill="#ffffff" font-size="13">Sports Excellence</text>
+  <text x="740" y="424" fill="#10b981" font-size="13" font-weight="700">₹40,000</text>
+  <rect x="860" y="410" width="70" height="20" rx="4" fill="#10b981" fill-opacity="0.2"/>
+  <text x="895" y="424" fill="#10b981" font-size="11" font-weight="700" text-anchor="middle">Approved</text>
+  <rect x="990" y="408" width="90" height="24" rx="4" fill="#1e293b"/>
+  <text x="1035" y="424" fill="#94a3b8" font-size="11" text-anchor="middle">View Award</text>
+</svg>

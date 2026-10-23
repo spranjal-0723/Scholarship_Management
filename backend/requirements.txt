@@ -11,3 +11,6 @@ oracledb==26.0.0
 pycparser==3.0
 typing_extensions==4.16.0
 Werkzeug==3.1.8
+neo4j==6.4.1
+gunicorn==26.2.0
+pytest==9.1.1
