@@ -1391,7 +1391,10 @@ def system_health():
 
     # Check Neo4j
     try:
-        from backend.neo4j_db import get_driver
+        try:
+            from backend.neo4j_db import get_driver
+        except (ImportError, ModuleNotFoundError):
+            from neo4j_db import get_driver
         driver = get_driver()
         with driver.session() as session:
             r_nodes = session.run("MATCH (n) RETURN count(n) AS cnt")
