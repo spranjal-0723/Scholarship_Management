@@ -92,8 +92,10 @@ def parse_args():
 
 def _load_env_if_needed():
     candidates = [
+        os.path.join(REPO_ROOT, ".env.aura"),
         os.path.join(REPO_ROOT, ".env"),
         os.path.join(REPO_ROOT, "backend", ".env"),
+        os.path.join(os.getcwd(), ".env.aura"),
         os.path.join(os.getcwd(), ".env"),
     ]
     for c in candidates:
@@ -113,12 +115,17 @@ def get_connection_params(args):
     _load_env_if_needed()
     uri = args.uri or os.getenv("NEO4J_URI", "bolt://localhost:7687")
     user = args.user or os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER") or "neo4j"
-    password = args.password or os.getenv("NEO4J_PASSWORD")
+    password = (
+        args.password
+        or os.getenv("AURA_PASSWORD")
+        or os.getenv("NEO4J_AURA_PASSWORD")
+        or os.getenv("NEO4J_PASSWORD")
+    )
     database = args.database or os.getenv("NEO4J_DATABASE", "neo4j")
 
     if not password:
-        print("\n❌ ERROR: NEO4J_PASSWORD is not provided.")
-        print("Please provide it via --password or set the NEO4J_PASSWORD environment variable.")
+        print("\n❌ ERROR: AuraDB password is not provided.")
+        print("Please set AURA_PASSWORD in .env.aura or export AURA_PASSWORD in your environment.")
         sys.exit(1)
 
     return uri, user, password, database
