@@ -3782,11 +3782,50 @@
         /* ================================================================== */
         /* 3. DUAL-ENGINE ARCHITECTURE & UNIFIED API HANDLER                  */
         /* ================================================================== */
+        let isCloudMode = false;
+
+        async function initSystemConfig() {
+            try {
+                const res = await fetch(`${API_BASE}/api/config`);
+                if (res.ok) {
+                    const cfg = await res.json();
+                    if (cfg.database_mode === "neo4j") {
+                        isCloudMode = true;
+                        currentEngine = "neo4j";
+                        localStorage.setItem("currentEngine", "neo4j");
+
+                        const btnOracle = document.getElementById("btnOracle");
+                        if (btnOracle) {
+                            btnOracle.title = "Oracle SQL is disabled in Cloud Demo Mode (Local Docker only)";
+                            btnOracle.style.opacity = "0.55";
+                            btnOracle.innerHTML = `<span>🗄️</span> Oracle (Local)`;
+                        }
+
+                        const badge = document.getElementById("engineBadge");
+                        if (badge) badge.textContent = "Active Engine: Neo4j AuraDB Cloud Database (/api/neo4j)";
+
+                        const desc = document.getElementById("engineDescription");
+                        if (desc) desc.textContent = "• Public Cloud Mode: 12 Canonical Node Labels & 12 Relationships live on Neo4j AuraDB.";
+
+                        const sidebarText = document.getElementById("sidebarEngineText");
+                        if (sidebarText) sidebarText.textContent = "Neo4j AuraDB Active";
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not fetch system config, defaulting to local engine state", e);
+            }
+        }
+
         function getApiPrefix() {
             return currentEngine === "neo4j" ? "/api/neo4j" : "";
         }
 
         function switchEngine(engine) {
+            if (isCloudMode && engine === "oracle") {
+                showToast("Cloud Demo Mode: Oracle Database is disabled on public deployment. All operations are powered live by Neo4j AuraDB. Oracle SQL/PLSQL source files are preserved in GitHub for DA-2 evaluation.", "warning");
+                return;
+            }
+
             currentEngine = engine;
             localStorage.setItem("currentEngine", engine);
 
@@ -3799,10 +3838,14 @@
             if (engine === "neo4j") {
                 btnNeo4j.className = "engine-btn active neo4j";
                 btnOracle.className = "engine-btn";
-                badge.textContent = "Active Engine: Neo4j Graph Database (/api/neo4j)";
-                desc.textContent = "• Index-free pointer traversals across 12 node entities and 12 relationship types.";
-                if (sidebarText) sidebarText.textContent = "Neo4j Graph Active";
-                showToast("Switched to Neo4j Graph Database Engine", "success");
+                badge.textContent = isCloudMode
+                    ? "Active Engine: Neo4j AuraDB Cloud Database (/api/neo4j)"
+                    : "Active Engine: Neo4j Graph Database (/api/neo4j)";
+                desc.textContent = isCloudMode
+                    ? "• Public Cloud Mode: 12 Canonical Node Labels & 12 Relationships live on Neo4j AuraDB."
+                    : "• Index-free pointer traversals across 12 node entities and 12 relationship types.";
+                if (sidebarText) sidebarText.textContent = isCloudMode ? "Neo4j AuraDB Active" : "Neo4j Graph Active";
+                showToast(isCloudMode ? "Connected to Neo4j AuraDB Cloud Engine" : "Switched to Neo4j Graph Database Engine", "success");
             } else {
                 btnOracle.className = "engine-btn active oracle";
                 btnNeo4j.className = "engine-btn";
@@ -3907,7 +3950,31 @@
                     throw new Error(errMsg);
                 }
 
-                return await response.json();
+                const jsonData = await response.json();
+
+                // Normalize wrapped entity responses from Neo4j (e.g. { students: [...] })
+                if (jsonData && typeof jsonData === "object" && !Array.isArray(jsonData)) {
+                    if (Array.isArray(jsonData.students) && targetEndpoint.includes("/students") && !targetEndpoint.match(/\/students\/[^\/]+/)) {
+                        return jsonData.students;
+                    }
+                    if (Array.isArray(jsonData.scholarships) && targetEndpoint.includes("/scholarships") && !targetEndpoint.match(/\/scholarships\/[^\/]+/)) {
+                        return jsonData.scholarships;
+                    }
+                    if (Array.isArray(jsonData.applications) && targetEndpoint.includes("/applications") && !targetEndpoint.match(/\/applications\/[^\/]+/)) {
+                        return jsonData.applications;
+                    }
+                    if (Array.isArray(jsonData.fees) && targetEndpoint.includes("/fees") && !targetEndpoint.match(/\/fees\/[^\/]+/)) {
+                        return jsonData.fees;
+                    }
+                    if (Array.isArray(jsonData.payments) && targetEndpoint.includes("/payments") && !targetEndpoint.match(/\/payments\/[^\/]+/)) {
+                        return jsonData.payments;
+                    }
+                    if (Array.isArray(jsonData.disbursements) && targetEndpoint.includes("/disbursements") && !targetEndpoint.match(/\/disbursements\/[^\/]+/)) {
+                        return jsonData.disbursements;
+                    }
+                }
+
+                return jsonData;
             } catch (err) {
                 if (status === 0) {
                     const latency = Math.round(performance.now() - startTime);
@@ -4586,12 +4653,12 @@
             }
 
             items.forEach(s => {
-                const stuId = s.StudentID || s.student_id || s.studentId || "";
-                const name = s.StudentName || s.student_name || s.name || "";
-                const phone = s.Phone || s.phone || "N/A";
-                const prg = s.ProgramName || s.program_name || "B.Tech";
-                const deg = s.DegreeLevel || s.degree_level || "UG";
-                const dept = s.DeptName || s.department || "Computer Science";
+                const stuId = s.StudentID || s.student_id || s.studentId || s.STUDENTID || "";
+                const name = s.StudentName || s.student_name || s.studentName || s.name || s.STUDENTNAME || "";
+                const phone = s.Phone || s.phone || s.PHONE || "N/A";
+                const prg = s.ProgramName || s.program_name || s.programName || s.PROGRAMNAME || "B.Tech";
+                const deg = s.DegreeLevel || s.degree_level || s.degreeLevel || s.DEGREELEVEL || "UG";
+                const dept = s.DeptName || s.deptName || s.dept_name || s.department || s.DEPTNAME || "Computer Science";
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -4794,10 +4861,10 @@
             grid.innerHTML = "";
 
             items.forEach(s => {
-                const schId = s.ScholarshipID || s.scholarship_id || "";
-                const name = s.ScholarshipName || s.scholarship_name || "";
-                const type = s.ScholarshipType || s.scholarship_type || "Merit";
-                const amt = formatCurrency(s.Amount || s.amount || 0);
+                const schId = s.ScholarshipID || s.scholarship_id || s.scholarshipId || s.SCHOLARSHIPID || s.name || "";
+                const name = s.ScholarshipName || s.scholarship_name || s.scholarshipName || s.SCHOLARSHIPNAME || s.ScholarshipType || s.scholarshipType || s.SCHOLARSHIPTYPE || "";
+                const type = s.ScholarshipType || s.scholarship_type || s.scholarshipType || s.SCHOLARSHIPTYPE || "Merit";
+                const amt = formatCurrency(s.Amount || s.amount || s.AMOUNT || 0);
 
                 const card = document.createElement("div");
                 card.className = "kpi-card";
@@ -4850,13 +4917,13 @@
             }
 
             items.forEach(a => {
-                const appId = a.ApplicationID || a.application_id || "";
-                const stuId = a.StudentID || a.student_id || "";
-                const stuName = a.StudentName || a.student_name || stuId;
-                const schName = a.ScholarshipName || a.scholarship_name || a.ScholarshipID || a.scholarship_id || "";
-                const amt = formatCurrency(a.Amount || a.amount || 0);
-                const date = formatDate(a.ApplicationDate || a.application_date);
-                const status = a.ApplicationStatus || a.status || "Pending";
+                const appId = a.ApplicationID || a.application_id || a.applicationId || a.APPLICATIONID || a.name || "";
+                const stuId = a.StudentID || a.student_id || a.studentId || a.STUDENTID || "";
+                const stuName = a.StudentName || a.student_name || a.studentName || a.STUDENTNAME || stuId;
+                const schName = a.ScholarshipName || a.scholarship_name || a.scholarshipName || a.SCHOLARSHIPNAME || a.ScholarshipType || a.scholarshipType || a.ScholarshipID || a.scholarship_id || (a.scholarship && (a.scholarship.name || a.scholarship.scholarshipType)) || "Academic Grant";
+                const amt = formatCurrency(a.Amount || a.amount || a.AMOUNT || (a.scholarship && a.scholarship.amount) || 0);
+                const date = formatDate(a.ApplicationDate || a.application_date || a.applicationDate || a.APPLICATIONDATE);
+                const status = a.ApplicationStatus || a.status || a.applicationStatus || a.APPLICATIONSTATUS || "Pending";
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -4962,10 +5029,10 @@
             }
 
             items.forEach(f => {
-                const feeId = f.FeeID || f.fee_id || "";
-                const stuId = f.StudentID || f.student_id || "";
-                const amt = formatCurrency(f.FeeAmount || f.fee_amount || 0);
-                const dueDate = formatDate(f.DueDate || f.due_date);
+                const feeId = f.FeeID || f.fee_id || f.feeId || f.FEEID || "";
+                const stuId = f.StudentID || f.student_id || f.studentId || f.STUDENTID || "";
+                const amt = formatCurrency(f.FeeAmount || f.fee_amount || f.feeAmount || f.FEEAMOUNT || 0);
+                const dueDate = formatDate(f.DueDate || f.due_date || f.dueDate || f.DUEDATE);
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -5077,12 +5144,12 @@
             }
 
             items.forEach(p => {
-                const payId = p.PaymentID || p.payment_id || "";
-                const feeId = p.FeeID || p.fee_id || "";
-                const method = p.MethodName || p.method_name || p.MethodID || p.method_id || "UPI";
-                const amt = formatCurrency(p.AmountPaid || p.amount_paid || 0);
-                const date = formatDate(p.PaymentDate || p.payment_date);
-                const txn = p.TransactionID || p.transaction_id || "";
+                const payId = p.PaymentID || p.payment_id || p.paymentId || p.PAYMENTID || "";
+                const feeId = p.FeeID || p.fee_id || p.feeId || p.FEEID || "";
+                const method = p.MethodName || p.method_name || p.methodName || p.METHODNAME || p.MethodID || p.method_id || p.methodId || p.METHODID || "UPI";
+                const amt = formatCurrency(p.AmountPaid || p.amount_paid || p.amountPaid || p.AMOUNTPAID || 0);
+                const date = formatDate(p.PaymentDate || p.payment_date || p.paymentDate || p.PAYMENTDATE);
+                const txn = p.TransactionID || p.transaction_id || p.transactionId || p.TRANSACTIONID || "";
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -5191,15 +5258,15 @@
             }
 
             items.forEach(d => {
-                const disId = d.DisbursementID || d.disbursement_id || "";
-                const schId = d.ScholarshipID || d.scholarship_id || "";
-                const stuId = d.StudentID || d.student_id || "N/A";
-                const stuName = d.StudentName || d.student_name || "N/A";
-                const rawAc = String(d.AccountNo || d.account_no || "");
+                const disId = d.DisbursementID || d.disbursement_id || d.disbursementId || d.DISBURSEMENTID || "";
+                const schId = d.ScholarshipID || d.scholarship_id || d.scholarshipId || d.SCHOLARSHIPID || "";
+                const stuId = d.StudentID || d.student_id || d.studentId || d.STUDENTID || "N/A";
+                const stuName = d.StudentName || d.student_name || d.studentName || d.STUDENTNAME || "N/A";
+                const rawAc = String(d.AccountNo || d.account_no || d.accountNo || d.ACCOUNTNO || "");
                 const maskedAc = rawAc.length > 4 ? "•••• •••• " + rawAc.slice(-4) : rawAc;
-                const amt = formatCurrency(d.Amount || d.amount || 0);
-                const mode = d.DisbursementMode || d.disbursement_mode || "NEFT";
-                const date = formatDate(d.DisbursementDate || d.disbursement_date);
+                const amt = formatCurrency(d.Amount || d.amount || d.AMOUNT || 0);
+                const mode = d.DisbursementMode || d.disbursement_mode || d.disbursementMode || d.DISBURSEMENTMODE || "Bank Transfer";
+                const date = formatDate(d.DisbursementDate || d.disbursement_date || d.disbursementDate || d.DISBURSEMENTDATE);
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -5264,6 +5331,9 @@
             document.getElementById("applicationDate").value = todayISO();
             document.getElementById("disbursementId").value = generateDisbursementId();
             document.getElementById("disbursementDate").value = todayISO();
+
+            // Discover runtime configuration and cloud database mode
+            await initSystemConfig();
 
             // Set saved engine button state
             switchEngine(currentEngine);

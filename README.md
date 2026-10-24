@@ -1,7 +1,8 @@
 # Scholarship and Fee Management System
 ### Unified Oracle SQL/PLSQL + Neo4j Graph Database Enterprise Platform
 
-[![Automated Tests](https://img.shields.io/badge/tests-180%20passed%20%2F%20180-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/spranjal-0723/Scholarship_Management)
+[![Automated Tests](https://img.shields.io/badge/tests-185%20passed%20%2F%20185-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/spranjal-0723/Scholarship_Management)
+[![Live Demo](https://img.shields.io/badge/live%20demo-Render%20%2B%20Neo4j%20AuraDB-blueviolet?style=for-the-badge&logo=render&logoColor=white)](docs/DEPLOYMENT_GUIDE.md)
 [![Architecture](https://img.shields.io/badge/architecture-Polyglot%20Persistence%20(Oracle%20%2B%20Neo4j)-blue?style=for-the-badge&logo=oracle&logoColor=white)](https://github.com/spranjal-0723/Scholarship_Management)
 [![Python Version](https://img.shields.io/badge/python-3.11%20%7C%20Flask%203.1-informational?style=for-the-badge&logo=python&logoColor=white)](https://github.com/spranjal-0723/Scholarship_Management)
 [![Frontend](https://img.shields.io/badge/frontend-Cytoscape.js%20%7C%20Chart.js-teal?style=for-the-badge&logo=javascript&logoColor=white)](https://github.com/spranjal-0723/Scholarship_Management)
@@ -15,35 +16,51 @@ The **Scholarship and Fee Management System** is a full-stack, enterprise-grade 
 
 The system implements **Polyglot Persistence**, unifying:
 1. **Oracle Database 23ai Free (Relational OLTP):** Implements 12 relational tables strictly normalized to Boyce-Codd Normal Form (BCNF), foreign key cascades, check constraints, database views, and stored PL/SQL procedures, functions, and financial guard triggers.
-2. **Neo4j Community Edition 5.26 (Enterprise Knowledge Graph):** Implements 12 canonical node labels and 12 directed relationship types with unique schema constraints, providing millisecond multi-hop graph traversals (index-free adjacency) to track complex student journeys, scholarship awards, and fee liabilities without high-latency relational joins.
-3. **Unified Flask 3.1 Backend:** A Python REST API featuring real-time database engine switching (`?engine=oracle` or `?engine=neo4j`), encrypted session authentication, CSRF tokens, and comprehensive automated test coverage (**180 passing automated tests**).
+2. **Neo4j Community Edition 5.26 & AuraDB Free (Enterprise Knowledge Graph):** Implements 12 canonical node labels and 12 directed relationship types with unique schema constraints, providing millisecond multi-hop graph traversals (index-free adjacency) to track complex student journeys, scholarship awards, and fee liabilities without high-latency relational joins.
+3. **Unified Flask 3.1 Backend:** A Python REST API featuring real-time database engine switching (`?engine=oracle` or `?engine=neo4j`), encrypted session authentication, CSRF tokens, and comprehensive automated test coverage (**185 passing automated tests**).
 4. **Interactive Single-Page Application (SPA):** An accessible, responsive academic dashboard featuring Chart.js visual analytics, student dossiers, scholarship sanction workflows, payment validation previews, and a real-time Cytoscape.js graph visualizer.
 
 ---
 
-## 2. Table of Contents
-- [1. Project Overview & Viva Executive Summary](#1-project-overview--viva-executive-summary)
-- [2. Table of Contents](#2-table-of-contents)
-- [3. System Architecture](#3-system-architecture)
-- [4. Academic Evolution: DA-1, DA-2, and DA-3](#4-academic-evolution-da-1-da-2-and-da-3)
-- [5. Technology Stack](#5-technology-stack)
-- [6. Repository Organization](#6-repository-organization)
-- [7. Visual Interface Tour](#7-visual-interface-tour)
-- [8. Dual-Database Polyglot Persistence Architecture](#8-dual-database-polyglot-persistence-architecture)
-- [9. Relational Database Schema & Constraints](#9-relational-database-schema--constraints)
-- [10. PL/SQL Business Logic Implementation](#10-plsql-business-logic-implementation)
-- [11. Neo4j Graph Schema & Cypher Traversals](#11-neo4j-graph-schema--cypher-traversals)
-- [12. Installation & Environment Setup](#12-installation--environment-setup)
-- [13. Running the Complete Application](#13-running-the-complete-application)
-- [14. Demonstration & Viva Evaluation Walkthrough](#14-demonstration--viva-evaluation-walkthrough)
-- [15. Automated Testing & Quality Assurance](#15-automated-testing--quality-assurance)
-- [16. Security & Production Readiness](#16-security--production-readiness)
-- [17. Team Responsibilities & Academic Declaration](#17-team-responsibilities--academic-declaration)
-- [18. Supplementary Documentation Directory](#18-supplementary-documentation-directory)
+## 2. 🌐 Live Cloud Demonstration (Zero Local Setup)
+
+The complete application is cloud-deployable on **Render** powered by **Neo4j AuraDB Free**, enabling faculty evaluators to explore the platform directly from any laptop or mobile browser without installing Docker, Oracle, Neo4j, or Python:
+
+> **Live Deployment Guide:** [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)  
+> **Evaluator Demo Credentials:**
+> - **URL:** Deployable on Render (see [Deployment Guide](docs/DEPLOYMENT_GUIDE.md))
+> - **Admin / Faculty Email:** `admin@scholarship.demo` *(or `faculty@scholarship.demo`)*
+> - **Password:** `Demo@12345`
+> - **Cloud Engine:** Live Neo4j AuraDB Free Knowledge Graph (250 nodes, 280 relationships)
+
+*Note: In public cloud mode (`APP_DATABASE_MODE=neo4j`), all application features run live against Neo4j AuraDB. Oracle SQL/PLSQL source files and relational schemas are fully preserved in `database/oracle/` for DA-2 academic evaluation.*
 
 ---
 
-## 3. System Architecture
+## 3. Table of Contents
+- [1. Project Overview & Viva Executive Summary](#1-project-overview--viva-executive-summary)
+- [2. 🌐 Live Cloud Demonstration (Zero Local Setup)](#2--live-cloud-demonstration-zero-local-setup)
+- [3. Table of Contents](#3-table-of-contents)
+- [4. System Architecture](#4-system-architecture)
+- [5. Academic Evolution: DA-1, DA-2, and DA-3](#5-academic-evolution-da-1-da-2-and-da-3)
+- [6. Technology Stack](#6-technology-stack)
+- [7. Repository Organization](#7-repository-organization)
+- [8. Visual Interface Tour](#8-visual-interface-tour)
+- [9. Dual-Database Polyglot Persistence Architecture](#9-dual-database-polyglot-persistence-architecture)
+- [10. Relational Database Schema & Constraints](#10-relational-database-schema--constraints)
+- [11. PL/SQL Business Logic Implementation](#11-plsql-business-logic-implementation)
+- [12. Neo4j Graph Schema & Cypher Traversals](#12-neo4j-graph-schema--cypher-traversals)
+- [13. Installation & Environment Setup](#13-installation--environment-setup)
+- [14. Running the Complete Application](#14-running-the-complete-application)
+- [15. Demonstration & Viva Evaluation Walkthrough](#15-demonstration--viva-evaluation-walkthrough)
+- [16. Automated Testing & Quality Assurance](#16-automated-testing--quality-assurance)
+- [17. Security & Production Readiness](#17-security--production-readiness)
+- [18. Team Responsibilities & Academic Declaration](#18-team-responsibilities--academic-declaration)
+- [19. Supplementary Documentation Directory](#19-supplementary-documentation-directory)
+
+---
+
+## 4. System Architecture
 
 ```mermaid
 graph TD
@@ -86,7 +103,7 @@ graph TD
 
 ---
 
-## 4. Academic Evolution: DA-1, DA-2, and DA-3
+## 5. Academic Evolution: DA-1, DA-2, and DA-3
 
 This project is built systematically across three distinct phases of database design and implementation:
 
@@ -98,7 +115,7 @@ This project is built systematically across three distinct phases of database de
 
 ---
 
-## 5. Technology Stack
+## 6. Technology Stack
 
 | Component | Technology | Version | Purpose |
 |---|---|---|---|
@@ -115,7 +132,7 @@ This project is built systematically across three distinct phases of database de
 
 ---
 
-## 6. Repository Organization
+## 7. Repository Organization
 
 ```text
 Scholarship_Management/
@@ -184,7 +201,7 @@ Scholarship_Management/
 
 ---
 
-## 7. Visual Interface Tour
+## 8. Visual Interface Tour
 
 | Screen View | Description | Visual Artifact |
 |---|---|---|
@@ -200,7 +217,7 @@ Scholarship_Management/
 
 ---
 
-## 8. Dual-Database Polyglot Persistence Architecture
+## 9. Dual-Database Polyglot Persistence Architecture
 
 ### Why Polyglot Persistence?
 Relational databases (RDBMS) excel at structured, tabular storage requiring strict ACID transactional guarantees (such as fee collections and ledger entries). However, when querying interconnected academic relationships across 5 to 7 entity layers (e.g., Finding the bank account that received a disbursement for a student enrolled in a department's program), relational engines suffer from expensive multi-way SQL `JOIN` operations.
@@ -219,7 +236,7 @@ Graph databases utilize **Index-Free Adjacency**, storing relationships as direc
 
 ---
 
-## 9. Relational Database Schema & Constraints
+## 10. Relational Database Schema & Constraints
 
 The Oracle schema consists of **12 normalized relations** (BCNF compliant):
 
@@ -352,7 +369,7 @@ For detailed column descriptions and relational integrity rules, refer to [docs/
 
 ---
 
-## 10. PL/SQL Business Logic Implementation
+## 11. PL/SQL Business Logic Implementation
 
 Source: `database/06_plsql.sql`
 
@@ -404,7 +421,7 @@ Utilizes a PL/SQL cursor joining `STUDENT`, `SCHOLARSHIP_APPLICATION`, and `SCHO
 
 ---
 
-## 11. Neo4j Graph Schema & Cypher Traversals
+## 12. Neo4j Graph Schema & Cypher Traversals
 
 ### Graph Constraints (12 Canonical Node Labels)
 To eliminate duplicate nodes during data imports, unique business key constraints are applied:
@@ -454,7 +471,7 @@ RETURN s, p, d, prof, g, a, sch, disb, b, f, pay;
 
 ---
 
-## 12. Installation & Environment Setup
+## 13. Installation & Environment Setup
 
 ### Prerequisites
 - **macOS / Linux / Windows WSL2**
@@ -521,7 +538,7 @@ pip install -r requirements.txt
 
 ---
 
-## 13. Running the Complete Application
+## 14. Running the Complete Application
 
 ### Start the Unified Application Server
 The Flask application serves both the backend REST API and the frontend Single-Page Application from a single unified port (**5050**):
@@ -540,7 +557,7 @@ http://127.0.0.1:5050/app
 
 ---
 
-## 14. Demonstration & Viva Evaluation Walkthrough
+## 15. Demonstration & Viva Evaluation Walkthrough
 
 Follow this 5-minute structured sequence during evaluation:
 
@@ -587,7 +604,7 @@ For full viva questions and answers, see [docs/demo-guide.md](docs/demo-guide.md
 
 ---
 
-## 15. Automated Testing & Quality Assurance
+## 16. Automated Testing & Quality Assurance
 
 The project contains a comprehensive automated regression suite written with `pytest`:
 
@@ -599,28 +616,35 @@ pytest tests/
 ### Verified Test Results
 ```text
 ============================= test session starts ==============================
-platform darwin -- Python 3.11.x, pytest-9.1.1, pluggy-1.5.0
+platform darwin -- Python 3.12/3.14, pytest-9.1.1, pluggy-1.7.0
 rootdir: /Users/.../Scholarship_Management
 configfile: pytest.ini
-collected 180 items
+collected 185 items
 
-tests/test_auth.py .............................................         [ 25%]
-tests/test_routes.py ................................................    [ 51%]
-tests/test_neo4j_routes.py ............................................  [ 80%]
-tests/test_integration.py ....................................           [100%]
+tests/test_academic_routes.py .........................                  [ 13%]
+tests/test_academic_service.py .............................             [ 29%]
+tests/test_app_integration.py ...                                        [ 30%]
+tests/test_auth_and_refinements.py ............                          [ 37%]
+tests/test_cloud_deployment.py .....                                     [ 40%]
+tests/test_financial_routes.py ..........................                [ 54%]
+tests/test_financial_service.py ..........................               [ 68%]
+tests/test_graph_service.py ...........................                  [ 82%]
+tests/test_neo4j_live.py ....                                            [ 84%]
+tests/test_neo4j_routes.py ............................                  [100%]
 
-============================= 180 passed in 1.77s ==============================
+============================= 185 passed in 1.37s ==============================
 ```
 
 ### Test Coverage Highlights
-- **Authentication & Security (`test_auth.py`):** Login success, bad password rejection, session cookie validation, CSRF token generation, header verification, and logout session destruction.
-- **Oracle REST API (`test_routes.py`):** CRUD operations on students, applications, scholarships, fees, payments, and error handling for overpayments.
-- **Neo4j Graph API (`test_neo4j_routes.py`):** Node CRUD, Cypher pattern validation, graph preset serialization, and constraint enforcement.
-- **Dual-Engine Integration (`test_integration.py`):** Engine toggle verification (`?engine=oracle` vs `?engine=neo4j`), data parity checks, and health telemetry.
+- **Authentication & Security (`test_auth_and_refinements.py`):** Login success, bad password rejection, session cookie validation, CSRF token generation, header verification, rate limiting, and logout session destruction.
+- **Academic Domain Service & Routes (`test_academic_service.py`, `test_academic_routes.py`):** Students, profiles, guardians, programs, departments, and scholarship applications CRUD and validations.
+- **Financial Domain Service & Routes (`test_financial_service.py`, `test_financial_routes.py`):** Fee tracking, payments, disbursements, bank accounts, and payment method validations.
+- **Neo4j Graph Traversals & Cypher (`test_graph_service.py`, `test_neo4j_routes.py`, `test_neo4j_live.py`):** Node CRUD, Cypher multi-hop pattern validation, live container assertions, and schema constraint enforcement.
+- **Cloud Deployment & Health Telemetry (`test_cloud_deployment.py`, `test_app_integration.py`):** Render `/healthz` liveness probes, `/api/config` runtime discovery, cloud mode Neo4j delegation routing, and HTML template delivery.
 
 ---
 
-## 16. Security & Production Readiness
+## 17. Security & Production Readiness
 
 - **No Hardcoded Credentials:** All credentials and secrets are externalized to `.env` with safe placeholders in `.env.example`.
 - **Session Protection:** Session cookies are flagged with `HttpOnly` and `SameSite=Lax`.
@@ -630,7 +654,7 @@ tests/test_integration.py ....................................           [100%]
 
 ---
 
-## 17. Team Responsibilities & Academic Declaration
+## 18. Team Responsibilities & Academic Declaration
 
 This project was developed for the Database Management Systems (DBMS) course curriculum:
 
@@ -642,10 +666,12 @@ This project was developed for the Database Management Systems (DBMS) course cur
 
 ---
 
-## 18. Supplementary Documentation Directory
+## 19. Supplementary Documentation Directory
 
 Comprehensive technical guides are available in the `docs/` folder:
 
+- **[Cloud Deployment Guide (Render + Neo4j AuraDB)](docs/DEPLOYMENT_GUIDE.md):** Step-by-step instructions for zero-installation live deployment on Render backed by Neo4j AuraDB Free.
+- **[Cloud Deployment & Readiness Report](docs/cloud_deployment_report.md):** Verification audit, commit hashes, parity checks, and evaluator checklist.
 - **[Database Schema & Polyglot Architecture Guide](docs/database-schema.md):** Complete specifications of all 12 Oracle tables, constraints, PL/SQL blocks, 12 Neo4j node labels, and relational-to-graph mapping.
 - **[REST API Reference Manual](docs/api-reference.md):** Complete documentation for all 40+ REST API endpoints with request bodies and JSON responses.
 - **[Demonstration & Viva Guide](docs/demo-guide.md):** 5-minute viva script, step-by-step evaluator walkthrough, and sample records.

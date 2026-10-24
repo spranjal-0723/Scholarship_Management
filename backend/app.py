@@ -2,12 +2,12 @@ import os
 from datetime import timedelta
 from flask import Flask, jsonify, request, send_from_directory, session
 from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 try:
     from backend.auth import auth_bp, login_required, validate_csrf
 except ModuleNotFoundError:
     from auth import auth_bp, login_required, validate_csrf
-
 
 try:
     from db import get_connection
@@ -15,17 +15,72 @@ except ModuleNotFoundError:
     from backend.db import get_connection
 
 try:
-    from backend.neo4j_routes import neo4j_bp
-except ModuleNotFoundError:
-    from neo4j_routes import neo4j_bp
+    from backend.neo4j_routes import (
+        neo4j_bp,
+        api_list_students,
+        api_get_student,
+        api_create_student,
+        api_list_applications,
+        api_get_application,
+        api_create_application,
+        api_update_application_status,
+        api_list_scholarships,
+        api_get_scholarship,
+        api_create_scholarship,
+        api_get_dashboard as neo4j_get_dashboard,
+        api_list_fees,
+        api_get_fee,
+        api_create_fee,
+        api_get_student_fees,
+        api_list_payments,
+        api_get_payment,
+        api_create_payment,
+        api_get_student_payments,
+        api_list_disbursements,
+        api_get_disbursement,
+        api_create_disbursement,
+        api_get_student_scholarships,
+    )
+except (ImportError, ModuleNotFoundError):
+    from neo4j_routes import (
+        neo4j_bp,
+        api_list_students,
+        api_get_student,
+        api_create_student,
+        api_list_applications,
+        api_get_application,
+        api_create_application,
+        api_update_application_status,
+        api_list_scholarships,
+        api_get_scholarship,
+        api_create_scholarship,
+        api_get_dashboard as neo4j_get_dashboard,
+        api_list_fees,
+        api_get_fee,
+        api_create_fee,
+        api_get_student_fees,
+        api_list_payments,
+        api_get_payment,
+        api_create_payment,
+        api_get_student_payments,
+        api_list_disbursements,
+        api_get_disbursement,
+        api_create_disbursement,
+        api_get_student_scholarships,
+    )
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+is_production = os.getenv("APP_ENV", "").lower() == "production" or os.getenv("RENDER", "").lower() == "true"
+APP_DATABASE_MODE = os.getenv("APP_DATABASE_MODE", "auto").strip().lower()
+DEMO_READ_ONLY = os.getenv("DEMO_READ_ONLY", "false").lower() in ("true", "1")
 
 # Session security attributes
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "scholarship-fee-mgmt-secret-key-2026-da3")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "false").lower() in ("true", "1")
+app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "true" if is_production else "false").lower().strip() in ("true", "1", "t")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 
 cors_origins = os.getenv("CORS_ALLOWED_ORIGINS")
@@ -44,6 +99,11 @@ def enforce_csrf():
     if request.method in ("POST", "PUT", "DELETE", "PATCH"):
         if request.path.startswith("/api/auth/login") or request.path.startswith("/api/auth/logout"):
             return
+        if DEMO_READ_ONLY and not request.path.startswith("/api/auth"):
+            return jsonify({
+                "error": "Data modifications are disabled in public demo mode to preserve the benchmark dataset for evaluators. Full read/write operations are supported in local full-stack mode.",
+                "read_only": True
+            }), 403
         if not validate_csrf():
             return jsonify({"error": "CSRF verification failed. Missing or invalid token."}), 403
 
@@ -54,8 +114,12 @@ def enforce_csrf():
 
 @app.route("/")
 def home():
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    if "text/html" in request.headers.get("Accept", ""):
+        return send_from_directory(repo_root, "index.html")
     return jsonify({
-        "message": "Scholarship and Fee Management System API is running"
+        "message": "Scholarship and Fee Management System API is running",
+        "mode": APP_DATABASE_MODE
     })
 
 
@@ -66,12 +130,39 @@ def serve_ui():
     return send_from_directory(repo_root, "index.html")
 
 
+@app.route("/healthz")
+@app.route("/render-health")
+def liveness_probe():
+    """Lightweight ping probe for Render without database queries."""
+    return jsonify({
+        "status": "live",
+        "service": "scholarship-fee-management",
+        "mode": APP_DATABASE_MODE
+    }), 200
+
+
+@app.route("/api/config", methods=["GET"])
+def get_system_config():
+    """Return runtime configuration to client."""
+    return jsonify({
+        "app_name": "Scholarship and Fee Management System",
+        "database_mode": APP_DATABASE_MODE,
+        "oracle_enabled": APP_DATABASE_MODE != "neo4j",
+        "neo4j_enabled": True,
+        "read_only": DEMO_READ_ONLY,
+        "environment": "production" if is_production else "development"
+    }), 200
+
+
 # ============================================================
 # 1. GET ALL STUDENTS
 # ============================================================
 
 @app.route("/api/students", methods=["GET"])
 def get_students():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_list_students()
+
     conn = None
     cursor = None
 
@@ -121,6 +212,9 @@ def get_students():
 @app.route("/api/students", methods=["POST"])
 @login_required
 def add_student():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_create_student()
+
     data = request.get_json()
 
     if not data:
@@ -206,6 +300,9 @@ def add_student():
 
 @app.route("/api/students/<student_id>", methods=["GET"])
 def get_student(student_id):
+    if APP_DATABASE_MODE == "neo4j":
+        return api_get_student(student_id)
+
     conn = None
     cursor = None
 
@@ -266,6 +363,9 @@ def get_student(student_id):
 
 @app.route("/api/scholarships", methods=["GET"])
 def get_scholarships():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_list_scholarships()
+
     conn = None
     cursor = None
 
@@ -313,6 +413,9 @@ def get_scholarships():
 
 @app.route("/api/applications", methods=["GET"])
 def get_applications():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_list_applications()
+
     conn = None
     cursor = None
 
@@ -362,6 +465,9 @@ def get_applications():
 @app.route("/api/applications", methods=["POST"])
 @login_required
 def add_application():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_create_application()
+
     data = request.get_json()
 
     if not data:
@@ -434,6 +540,9 @@ def add_application():
 @app.route("/api/scholarships", methods=["POST"])
 @login_required
 def add_scholarship():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_create_scholarship()
+
     data = request.get_json()
 
     if not data:
@@ -535,6 +644,9 @@ def add_scholarship():
 
 @app.route("/api/students/<student_id>/scholarships", methods=["GET"])
 def get_student_scholarships(student_id):
+    if APP_DATABASE_MODE == "neo4j":
+        return api_get_student_scholarships(student_id)
+
     conn = None
     cursor = None
 
@@ -584,6 +696,9 @@ def get_student_scholarships(student_id):
 @app.route("/api/applications/<application_id>/status", methods=["PUT"])
 @login_required
 def update_application_status(application_id):
+    if APP_DATABASE_MODE == "neo4j":
+        return api_update_application_status(application_id)
+
     data = request.get_json()
 
     if not data or "status" not in data:
@@ -651,6 +766,9 @@ def update_application_status(application_id):
 
 @app.route("/api/disbursements", methods=["GET"])
 def get_disbursements():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_list_disbursements()
+
     conn = None
     cursor = None
 
@@ -711,6 +829,9 @@ def get_disbursements():
 @app.route("/api/disbursements", methods=["POST"])
 @login_required
 def add_disbursement():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_create_disbursement()
+
     data = request.get_json()
 
     if not data:
@@ -840,6 +961,9 @@ def add_disbursement():
 @app.route("/api/fees", methods=["POST"])
 @login_required
 def add_fee():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_create_fee()
+
     data = request.get_json()
 
     if not data:
@@ -948,6 +1072,9 @@ def add_fee():
 
 @app.route("/api/fees", methods=["GET"])
 def get_fees():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_list_fees()
+
     conn = None
     cursor = None
 
@@ -1004,6 +1131,9 @@ def get_fees():
 
 @app.route("/api/students/<student_id>/fees", methods=["GET"])
 def get_student_fees(student_id):
+    if APP_DATABASE_MODE == "neo4j":
+        return api_get_student_fees(student_id)
+
     conn = None
     cursor = None
 
@@ -1063,6 +1193,9 @@ def get_student_fees(student_id):
 
 @app.route("/api/payments", methods=["GET"])
 def get_payments():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_list_payments()
+
     conn = None
     cursor = None
 
@@ -1117,6 +1250,9 @@ def get_payments():
 @app.route("/api/payments", methods=["POST"])
 @login_required
 def add_payment():
+    if APP_DATABASE_MODE == "neo4j":
+        return api_create_payment()
+
     data = request.get_json()
 
     if not data:
@@ -1202,6 +1338,9 @@ def add_payment():
 
 @app.route("/api/students/<student_id>/payments", methods=["GET"])
 def get_student_payments(student_id):
+    if APP_DATABASE_MODE == "neo4j":
+        return api_get_student_payments(student_id)
+
     conn = None
     cursor = None
 
@@ -1254,6 +1393,9 @@ def get_student_payments(student_id):
 
 @app.route("/api/dashboard", methods=["GET"])
 def get_dashboard():
+    if APP_DATABASE_MODE == "neo4j":
+        return neo4j_get_dashboard()
+
     conn = None
     cursor = None
 
@@ -1355,39 +1497,46 @@ def system_health():
     }
 
     # Check Oracle
-    conn = None
-    cursor = None
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        tables = [
-            "DEPARTMENT", "PROGRAM", "STUDENT", "STUDENT_PROFILE",
-            "GUARDIAN", "SCHOLARSHIP", "SCHOLARSHIP_APPLICATION",
-            "STUDENT_FEE", "PAYMENT_METHOD", "FEE_PAYMENT",
-            "BANK_ACCOUNT", "DISBURSEMENT"
-        ]
-        total = 0
-        for t in tables:
-            try:
-                cursor.execute(f"SELECT COUNT(*) FROM {t}")
-                row = cursor.fetchone()
-                if row:
-                    total += row[0]
-            except Exception:
-                pass
+    if APP_DATABASE_MODE == "neo4j":
         status["oracle"] = {
-            "status": "connected",
-            "tables": len(tables),
-            "total_records": total
+            "status": "disabled_in_cloud_mode",
+            "note": "Oracle Relational DB is preserved in repository; Neo4j AuraDB is active in cloud mode.",
+            "tables": 12
         }
-    except Exception as e:
-        status["oracle"]["error"] = str(e)
-        status["status"] = "degraded"
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+    else:
+        conn = None
+        cursor = None
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+            tables = [
+                "DEPARTMENT", "PROGRAM", "STUDENT", "STUDENT_PROFILE",
+                "GUARDIAN", "SCHOLARSHIP", "SCHOLARSHIP_APPLICATION",
+                "STUDENT_FEE", "PAYMENT_METHOD", "FEE_PAYMENT",
+                "BANK_ACCOUNT", "DISBURSEMENT"
+            ]
+            total = 0
+            for t in tables:
+                try:
+                    cursor.execute(f"SELECT COUNT(*) FROM {t}")
+                    row = cursor.fetchone()
+                    if row:
+                        total += row[0]
+                except Exception:
+                    pass
+            status["oracle"] = {
+                "status": "connected",
+                "tables": len(tables),
+                "total_records": total
+            }
+        except Exception as e:
+            status["oracle"]["error"] = str(e)
+            status["status"] = "degraded"
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
 
     # Check Neo4j
     try:
@@ -1409,6 +1558,9 @@ def system_health():
     except Exception as e:
         status["neo4j"]["error"] = str(e)
         status["status"] = "degraded"
+
+    if APP_DATABASE_MODE == "neo4j":
+        status["status"] = "healthy" if status["neo4j"]["status"] == "connected" else "degraded"
 
     return jsonify(status), 200
 

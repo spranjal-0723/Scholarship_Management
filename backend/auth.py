@@ -19,8 +19,8 @@ DEMO_EMAIL = os.getenv("DEMO_ADMIN_EMAIL", "admin@scholarship.demo").strip().low
 DEMO_NAME = os.getenv("DEMO_ADMIN_NAME", "Demo Administrator")
 DEMO_ROLE = "Administrator"
 
-# Default password for academic demo
-_DEFAULT_DEMO_PASSWORD = "Demo@12345"
+# Support custom password from environment or default academic demo password
+_DEFAULT_DEMO_PASSWORD = os.getenv("DEMO_ADMIN_PASSWORD", "Demo@12345")
 _DEMO_HASH_ENV = os.getenv("DEMO_ADMIN_PASSWORD_HASH")
 
 if _DEMO_HASH_ENV:
@@ -33,6 +33,14 @@ else:
 _FAILED_LOGIN_ATTEMPTS = {}
 _RATE_LIMIT_WINDOW_SECONDS = 60
 _MAX_FAILED_ATTEMPTS = 5
+
+
+def _get_client_ip() -> str:
+    """Get client IP, respecting X-Forwarded-For when behind a reverse proxy."""
+    xff = request.headers.get("X-Forwarded-For")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.remote_addr or "127.0.0.1"
 
 
 def _is_rate_limited(ip_address: str) -> bool:
@@ -97,7 +105,7 @@ def login_required(f):
 @auth_bp.route("/login", methods=["POST"])
 def login():
     """Authenticate demo user, enforce rate limits, and establish session."""
-    ip_addr = request.remote_addr or "127.0.0.1"
+    ip_addr = _get_client_ip()
 
     if _is_rate_limited(ip_addr):
         return jsonify({
@@ -112,15 +120,16 @@ def login():
     if not email or not password:
         return jsonify({"error": "Email and password are required."}), 400
 
-    # Verify credentials
-    if email == DEMO_EMAIL and check_password_hash(DEMO_PASSWORD_HASH, password):
+    # Verify credentials (supports configured admin email as well as evaluator alias)
+    is_valid_email = email in (DEMO_EMAIL, "faculty@scholarship.demo", "evaluator@scholarship.demo")
+    if is_valid_email and check_password_hash(DEMO_PASSWORD_HASH, password):
         _clear_failed_attempts(ip_addr)
 
         session.clear()
         session["authenticated"] = True
         session["user"] = {
             "email": email,
-            "name": DEMO_NAME,
+            "name": "Faculty Evaluator" if "faculty" in email or "evaluator" in email else DEMO_NAME,
             "role": DEMO_ROLE
         }
         session.permanent = remember

@@ -36,10 +36,10 @@ def _load_env_if_needed():
 
 @lru_cache(maxsize=1)
 def get_driver():
-    """Create and reuse a Neo4j driver."""
+    """Create and reuse a Neo4j driver with support for local and AuraDB cloud connections."""
     _load_env_if_needed()
     uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-    username = os.getenv("NEO4J_USERNAME", "neo4j")
+    username = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER") or "neo4j"
     password = os.getenv("NEO4J_PASSWORD")
 
     if not password:
@@ -47,7 +47,14 @@ def get_driver():
             "NEO4J_PASSWORD is not set. Configure your environment first."
         )
 
-    return GraphDatabase.driver(uri, auth=(username, password))
+    # AuraDB and cloud resilience options
+    # max_connection_lifetime prevents stale connections when cloud databases idle out
+    return GraphDatabase.driver(
+        uri,
+        auth=(username, password),
+        max_connection_lifetime=int(os.getenv("NEO4J_MAX_CONNECTION_LIFETIME", "300")),
+        keep_alive=True
+    )
 
 
 def get_database_name():
