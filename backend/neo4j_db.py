@@ -79,9 +79,20 @@ def get_driver():
 
 
 def get_database_name():
-    """Return the configured Neo4j database name."""
+    """Return the configured Neo4j database name, auto-resolving AuraDB instance database when appropriate."""
     _load_env_if_needed()
-    return os.getenv("NEO4J_DATABASE", "neo4j")
+    db = os.getenv("NEO4J_DATABASE")
+    if db and db != "neo4j":
+        return db
+
+    uri = os.getenv("NEO4J_URI", "")
+    if "databases.neo4j.io" in uri:
+        import re
+        m = re.search(r"//([a-zA-Z0-9]+)\.databases\.neo4j\.io", uri)
+        if m:
+            return m.group(1)
+
+    return db or "neo4j"
 
 
 def verify_connection():

@@ -15,17 +15,19 @@ services:
       - key: FLASK_DEBUG
         value: "false"
       - key: DEMO_READ_ONLY
-        value: "false"
+        value: "true"
       - key: FLASK_SECRET_KEY
         generateValue: true
       - key: NEO4J_URI
+        sync: false
+      - key: NEO4J_USERNAME
         sync: false
       - key: NEO4J_USER
         sync: false
       - key: NEO4J_PASSWORD
         sync: false
       - key: NEO4J_DATABASE
-        value: neo4j
+        sync: false
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
       - key: DEMO_ADMIN_EMAIL
