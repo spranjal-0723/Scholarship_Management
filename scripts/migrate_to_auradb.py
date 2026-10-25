@@ -16,6 +16,15 @@ Usage:
 
 import os
 import sys
+
+# Ensure SSL CA bundle is active on macOS before OpenSSL C library initializes
+if "SSL_CERT_FILE" not in os.environ:
+    if os.path.isfile("/etc/ssl/cert.pem"):
+        os.environ["SSL_CERT_FILE"] = "/etc/ssl/cert.pem"
+        try:
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+        except Exception:
+            pass
 import argparse
 from typing import Dict, Any
 
@@ -23,6 +32,17 @@ from typing import Dict, Any
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
+
+# Ensure SSL CA bundle is loaded for encrypted cloud connections (especially on macOS)
+if "SSL_CERT_FILE" not in os.environ:
+    if os.path.isfile("/etc/ssl/cert.pem"):
+        os.environ["SSL_CERT_FILE"] = "/etc/ssl/cert.pem"
+    else:
+        try:
+            import certifi
+            os.environ["SSL_CERT_FILE"] = certifi.where()
+        except ImportError:
+            pass
 
 from neo4j import GraphDatabase
 from neo4j.exceptions import Neo4jError
@@ -82,16 +102,27 @@ CONSTRAINTS = [
 def parse_args():
     parser = argparse.ArgumentParser(description="Migrate dataset to Neo4j AuraDB Cloud")
     parser.add_argument("--uri", help="Neo4j connection URI (e.g. neo4j+s://xxx.databases.neo4j.io)")
-    parser.add_argument("--user", help="Neo4j username (defaults to neo4j)")
+    parser.add_argument("--user", help="Neo4j username (defaults to neo4j or from credentials file)")
     parser.add_argument("--password", help="Neo4j password")
+    parser.add_argument("--credentials-file", help="Path to Neo4j credentials file (.txt)")
     parser.add_argument("--database", help="Target database name (default: neo4j)")
     parser.add_argument("--clear-first", action="store_true", help="Explicitly clear graph before seeding (default: False)")
     parser.add_argument("--dry-run", action="store_true", help="Verify connection without modifying data")
     return parser.parse_args()
 
 
-def _load_env_if_needed():
+def _load_env_if_needed(cred_file=None):
+    if "SSL_CERT_FILE" not in os.environ:
+        try:
+            import certifi
+            os.environ["SSL_CERT_FILE"] = certifi.where()
+        except ImportError:
+            if os.path.isfile("/etc/ssl/cert.pem"):
+                os.environ["SSL_CERT_FILE"] = "/etc/ssl/cert.pem"
+
     candidates = [
+        cred_file,
+        "/Users/pranjalsingh/Downloads/Neo4j-3d2c4ba3-Created-2026-10-24.txt",
         os.path.join(REPO_ROOT, ".env.aura"),
         os.path.join(REPO_ROOT, ".env"),
         os.path.join(REPO_ROOT, "backend", ".env"),
@@ -99,7 +130,7 @@ def _load_env_if_needed():
         os.path.join(os.getcwd(), ".env"),
     ]
     for c in candidates:
-        if os.path.isfile(c):
+        if c and os.path.isfile(c):
             try:
                 with open(c, "r", encoding="utf-8") as f:
                     for line in f:
@@ -112,7 +143,7 @@ def _load_env_if_needed():
 
 
 def get_connection_params(args):
-    _load_env_if_needed()
+    _load_env_if_needed(getattr(args, "credentials_file", None))
     uri = args.uri or os.getenv("NEO4J_URI", "bolt://localhost:7687")
     user = args.user or os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER") or "neo4j"
     password = (
@@ -129,6 +160,17 @@ def get_connection_params(args):
         sys.exit(1)
 
     return uri, user, password, database
+
+
+def _try_driver(uri, user, password):
+    driver = GraphDatabase.driver(
+        uri,
+        auth=(user, password),
+        max_connection_lifetime=300,
+        keep_alive=True
+    )
+    driver.verify_connectivity()
+    return driver
 
 
 def main():
@@ -149,25 +191,52 @@ def main():
     print("=" * 65)
 
     print("\n[Step 1/5] Connecting to Neo4j instance...")
+    driver = None
     try:
-        driver = GraphDatabase.driver(
-            uri,
-            auth=(user, password),
-            max_connection_lifetime=300,
-            keep_alive=True
-        )
-        driver.verify_connectivity()
-        print("✓ Connectivity verified successfully!")
+        driver = _try_driver(uri, user, password)
+        print(f"✓ Connectivity verified successfully with user '{user}'!")
     except Exception as exc:
-        print(f"❌ Failed to connect to Neo4j: {exc}")
-        sys.exit(1)
+        alt_user = None
+        if user == "neo4j" and os.getenv("NEO4J_USERNAME") and os.getenv("NEO4J_USERNAME") != "neo4j":
+            alt_user = os.getenv("NEO4J_USERNAME")
+        elif user != "neo4j":
+            alt_user = "neo4j"
+        if alt_user:
+            try:
+                driver = _try_driver(uri, alt_user, password)
+                user = alt_user
+                print(f"✓ Connectivity verified successfully with user '{user}'!")
+            except Exception:
+                pass
+        if not driver:
+            print(f"❌ Failed to connect to Neo4j: {exc}")
+            sys.exit(1)
 
     if args.dry_run:
         print("\n✓ Dry-run completed successfully! Database is reachable. Exiting.")
         driver.close()
         return
 
-    with driver.session(database=database) as session:
+    # Connect to target database with fallback for AuraDB naming
+    session = None
+    target_db = database
+    for db_candidate in [database, os.getenv("NEO4J_DATABASE"), "3d2c4ba3", "neo4j", None]:
+        try:
+            s = driver.session(database=db_candidate) if db_candidate else driver.session()
+            s.run("RETURN 1").consume()
+            session = s
+            target_db = db_candidate or "default"
+            break
+        except Exception:
+            continue
+
+    if not session:
+        session = driver.session()
+        target_db = "default"
+
+    print(f"Using target database: {target_db}")
+
+    with session:
         # Check current count
         rec = session.run("MATCH (n) RETURN count(n) AS cnt").single()
         current_node_count = rec["cnt"] if rec else 0

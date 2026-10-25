@@ -3,17 +3,38 @@
 import os
 from functools import lru_cache
 
+# Ensure SSL CA bundle is loaded for encrypted cloud connections (especially on macOS)
+if "SSL_CERT_FILE" not in os.environ:
+    if os.path.isfile("/etc/ssl/cert.pem"):
+        os.environ["SSL_CERT_FILE"] = "/etc/ssl/cert.pem"
+    else:
+        try:
+            import certifi
+            os.environ["SSL_CERT_FILE"] = certifi.where()
+        except ImportError:
+            pass
+
 from neo4j import GraphDatabase
 from neo4j.exceptions import Neo4jError
 
 
 def _load_env_if_needed():
     """Load environment variables from a local .env file if NEO4J_PASSWORD is not set."""
+    if "SSL_CERT_FILE" not in os.environ:
+        try:
+            import certifi
+            os.environ["SSL_CERT_FILE"] = certifi.where()
+        except ImportError:
+            if os.path.isfile("/etc/ssl/cert.pem"):
+                os.environ["SSL_CERT_FILE"] = "/etc/ssl/cert.pem"
+
     if os.getenv("NEO4J_PASSWORD"):
         return
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.abspath(os.path.join(base_dir, ".."))
     candidates = [
+        os.path.join(repo_root, ".env.aura"),
         os.path.join(base_dir, ".env"),
         os.path.join(os.getcwd(), ".env"),
         os.path.join(os.getcwd(), "backend", ".env"),
